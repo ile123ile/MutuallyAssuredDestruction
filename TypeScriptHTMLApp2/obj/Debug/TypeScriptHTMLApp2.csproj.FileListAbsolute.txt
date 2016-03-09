@@ -1,6 +1,0 @@
-c:\users\lbagd\documents\visual studio 2015\Projects\TypeScriptHTMLApp2\TypeScriptHTMLApp2\obj\Debug\TypeScriptHTMLApp2.csprojResolveAssemblyReference.cache
-c:\users\lbagd\documents\visual studio 2015\Projects\TypeScriptHTMLApp2\TypeScriptHTMLApp2\bin\TypeScriptHTMLApp2.dll.config
-c:\users\lbagd\documents\visual studio 2015\Projects\TypeScriptHTMLApp2\TypeScriptHTMLApp2\bin\TypeScriptHTMLApp2.dll
-c:\users\lbagd\documents\visual studio 2015\Projects\TypeScriptHTMLApp2\TypeScriptHTMLApp2\bin\TypeScriptHTMLApp2.pdb
-c:\users\lbagd\documents\visual studio 2015\Projects\TypeScriptHTMLApp2\TypeScriptHTMLApp2\obj\Debug\TypeScriptHTMLApp2.dll
-c:\users\lbagd\documents\visual studio 2015\Projects\TypeScriptHTMLApp2\TypeScriptHTMLApp2\obj\Debug\TypeScriptHTMLApp2.pdb
