@@ -7,8 +7,16 @@ var Game;
             });
         }
         PhaserProject.prototype.preload = function () {
+            //Graphics
+            this.game.load.image("title", "/Graphics/titletemplate.jpg");
+            this.game.load.image("greenSquare", "/Graphics/greenSquare.png");
+            //Spritesheets if we use any animations
+            //Audio
+            this.game.load.audio("TitleSong", ["Sounds/TitleSong.mp3", "Sounds/TitleSong.ogg", "Songs/TitleSong.wav"]);
         };
         PhaserProject.prototype.create = function () {
+            this.game.state.add("TitleScreenState", MutuallyAssuredDestruction.TitleScreenState, true); //running state
+            this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL; //handle resolutions automatically
         };
         return PhaserProject;
     })();
