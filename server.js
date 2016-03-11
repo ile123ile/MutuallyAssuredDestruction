@@ -8,7 +8,6 @@ app.get('/', function(req, res){
 
 var id = 0;
 var playerWait;
-var games = [];
 
 io.on('connection', function(socket){
 	var pid = id++;
@@ -19,21 +18,42 @@ io.on('connection', function(socket){
 	}
 	else
 	{
-		socket.emit('chat message', 'You connected with ' + playerWait.pid);
-		playerWait.socket.emit('chat message', 'You connected with ' + pid);
+		socket.emit('move', 'You connected with ' + playerWait.pid);
+		playerWait.socket.emit('move', 'You connected with ' + pid);
 		player.partner = playerWait;
 		playerWait.partner = player;
+		var game = {
+			head: player.pid, 
+			body: playerWait.pid,
+			level: 1 
+		};
+		console.log(player.pid+' connected with '+playerWait.pid);
+
 
 		playerWait = null;
 	}
 	console.log(pid+': a user connected');
 	socket.on('disconnect', function(){
 		console.log(pid+': a user disconnected');
+		if(player.partner != null)
+		{
+			player.partner.socket.emit('message', 'haha you fucker your partner left');
+		}
+		if(playerWait.pid === player.pid)
+		{
+			playerWait = null;
+		}
 	});
-	socket.on('chat message', function(msg){
+	socket.on('move', function(msg){
 		console.log('message: '+msg);
+		player.move = msg;
 		if(player.partner != null){
-			player.partner.socket.emit('chat message', pid+': '+msg);
+			if(player.partner.move != null){
+				player.socket.emit('move', player.partner.move);
+				player.partner.socket.emit('move', player.move);
+				player.partner.move = null;
+				player.move = null;
+			}
 		}
 	});
 });
