@@ -23,7 +23,10 @@
     <script>
       var socket = io();
       $('form').submit(function(){
-        socket.emit('move', $('#m').val());
+        socket.emit('move', $('#m').val(), function(received)
+          {
+            $('#messages').append($('<li>').text(received));
+          });
         $('#m').val('');
         return false;
       });
@@ -31,7 +34,7 @@
         $('#messages').append($('<li>').text(msg));
       });
       socket.on('message', function(msg){
-        $('#messages').append($('<li>').text('WARNING: '+msg));
+        $('#messages').append($('<li>').text(msg));
       });
     </script>
   </body>
