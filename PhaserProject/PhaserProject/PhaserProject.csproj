@@ -23,7 +23,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.css" />
+    <Content Include="Graphics\2151465-grid.jpg" />
     <Content Include="Graphics\greenSquare.png" />
+    <Content Include="Graphics\original.png" />
+    <Content Include="Graphics\greendude.png" />
     <Content Include="Graphics\titletemplate.jpg" />
     <Content Include="index.html" />
     <Content Include="phaser.js" />
@@ -32,12 +35,10 @@
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="app.ts" />
     <TypeScriptCompile Include="p2.d.ts" />
     <TypeScriptCompile Include="phaser.d.ts" />
     <TypeScriptCompile Include="pixi.d.ts" />
-    <TypeScriptCompile Include="States\GamePlayState.ts" />
-    <TypeScriptCompile Include="States\TitleScreenState.ts" />
+    <TypeScriptCompile Include="game.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Sounds\TitleSong.ogg" />
