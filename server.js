@@ -37,14 +37,14 @@ io.on('connection', function(socket){
 		console.log(pid+': a user disconnected');
 		if(player.partner != null)
 		{
-			player.partner.socket.emit('message', 'haha you fucker your partner left');
+			player.partner.socket.emit('message', 'Warning: haha you fucker your partner left');
 		}
-		if(playerWait.pid === player.pid)
+		if(playerWait != null && playerWait.pid === player.pid)
 		{
 			playerWait = null;
 		}
 	});
-	socket.on('move', function(msg){
+	socket.on('move', function(msg, fn){
 		console.log('message: '+msg);
 		player.move = msg;
 		if(player.partner != null){
@@ -53,6 +53,10 @@ io.on('connection', function(socket){
 				player.partner.socket.emit('move', player.move);
 				player.partner.move = null;
 				player.move = null;
+			}
+			else{
+				player.partner.socket.emit('message', 'Your partner has moved');
+				fn('received');
 			}
 		}
 	});
