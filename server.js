@@ -18,8 +18,8 @@ io.on('connection', function(socket){
 	}
 	else
 	{
-		socket.emit('move', 'You connected with ' + playerWait.pid);
-		playerWait.socket.emit('move', 'You connected with ' + pid);
+		socket.emit('move', 'You are head. You connected with body ' + playerWait.pid);
+		playerWait.socket.emit('move', 'You are body. You connected with head ' + pid);
 		player.partner = playerWait;
 		playerWait.partner = player;
 		var game = {
