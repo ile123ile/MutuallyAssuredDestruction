@@ -1,11 +1,22 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+app.get('/test', function(req, res){
+  res.sendFile(__dirname + '/test.html');
 });
-
+/*function routeGameFile(URI, fileName) {
+	app.get(URI, function(req, res){
+		res.sendFile(__dirname + '/PhaserProject/PhaserProject/' + fileName);
+	});
+}
+routeGameFile('/game.html', 'index.html');
+routeGameFile('/game.js', 'game.js');
+routeGameFile('/phaser.js', 'phaser.js');
+routeGameFile('/TitleScreenState.js', 'TitleScreenState.js');
+routeGameFile('/GameObjects/Player.js', '/GameObjects/Player.js');*/
+app.use(express.static(__dirname + '/PhaserProject/PhaserProject/Public'));
 var id = 0;
 var playerWait;
 
