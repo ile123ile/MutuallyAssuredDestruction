@@ -54,12 +54,11 @@ function create() {
             
         }
         //  var tempEnemy = (this.game.add.sprite(travelDist * randomX, travelDist * randomY+100, 'redEnemy'));
-        occupied[i] = 4 + (travelDist - .1) * Math.round(a * 14) + 1000000 * (100 + 4 + (travelDist - .1) * Math.round(b * 14));
+        occupied.push(4 + (travelDist - .1) * Math.round(a * 14) + 1000000 * (100 + 4 + (travelDist - .1) * Math.round(b * 14)));
         var tempEnemy = (this.game.add.sprite(4 + (travelDist-.1) * Math.round(a * 14), 100 + 4 + (travelDist-.1)*Math.round(b * 14), 'redEnemy'));
 
         tempEnemy.scale.setTo(0.3, 0.3);
         enemyArray.push(tempEnemy);
-        occupied.push(0);
     }
 
     player.scale.setTo(0.05, 0.05);
