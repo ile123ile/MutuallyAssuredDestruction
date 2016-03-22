@@ -25,6 +25,13 @@ function preload() {
     this.game.load.image('player', 'Graphics/greendude.png');
     this.game.load.image('bullet', 'Graphics/bullet.png');
     this.game.load.image('redEnemy', "Graphics/redenemy.jpg");
+
+    this.game.load.image('grid', "Graphics/2151465-grid.jpg");
+    this.game.load.image('player', "Graphics/greendude.png");
+    this.game.load.image('redEnemy', "Graphics/redenemy.jpg");
+    cursors = this.game.input.keyboard.createCursorKeys();
+    window.setInterval(submitMove, 3000);
+    window.setInterval(updateTimer, 300);
 }
 
 function create() {
@@ -32,32 +39,39 @@ function create() {
     // center of the screen, and set the anchor to the center of
     // the image so it's centered properly. There's a lot of
     // centering in that last sentence
+  //  console.log("hi");
+
     var style = { font: "32px Arial" };
     timeText = game.add.text(100, 0, "0", style);
     inputText = game.add.text(100, 50, "", style);
     var grid = this.game.add.sprite(0, 100, 'grid');
     player = this.game.add.sprite(0, 100, 'player');
-    player.scale.setTo(0.05, 0.05);
 
     //init enemies
     var a = Math.random();
     var b = Math.random();
     for (var i = 0; i < 3; i++) {
         //generate random coordinates
+        
         a = Math.random();
         b = Math.random();
+         
         for (var count = 0; count < enemyArray.length; count++) {
             while ((enemyArray[count].x == a && enemyArray[count].y == b) || (a == player.x && b == player.y)) {
                 a = Math.random();
                 b = Math.random();
             }
+            
         }
         //  var tempEnemy = (this.game.add.sprite(travelDist * randomX, travelDist * randomY+100, 'redEnemy'));
         occupied.push(4 + (travelDist - .1) * Math.round(a * 14) + 1000000 * (100 + 4 + (travelDist - .1) * Math.round(b * 14)));
-        var tempEnemy = (this.game.add.sprite(4 + (travelDist - .1) * Math.round(a * 14), 100 + 4 + (travelDist - .1) * Math.round(b * 14), 'redEnemy'));
+        var tempEnemy = (this.game.add.sprite(4 + (travelDist-.1) * Math.round(a * 14), 100 + 4 + (travelDist-.1)*Math.round(b * 14), 'redEnemy'));
+
         tempEnemy.scale.setTo(0.3, 0.3);
         enemyArray.push(tempEnemy);
     }
+
+    player.scale.setTo(0.05, 0.05);
 
 
     bullets = game.add.group();
@@ -69,10 +83,8 @@ function create() {
     bullets.setAll('outOfBoundsKill', true);
 
     cursors = this.game.input.keyboard.createCursorKeys();
-    window.setInterval(submitMove, 3000);
-    window.setInterval(updateTimer, 300);
 }
-
+ 
 function updateTimer() {
     time += 300;
     timeText.setText(time);
@@ -114,12 +126,24 @@ function submitMove() {
 
     movementInput = "";
 
+   
+    moveEnemy();
+    if (movementInput == "right")
+        player.x += travelDist;
+    else if (movementInput == "left")
+        player.x -= travelDist;
+    else if (movementInput == "up")
+        player.y -= travelDist;
+    else if (movementInput == "down")
+        player.y += travelDist;
+    movementInput = "";
     for (var r = 0; r < enemyArray.length; r++) {
         if ((Math.abs(player.x - enemyArray[r].x) <= 10) && (Math.abs(player.y - enemyArray[r].y) <= 10)) {
             player.kill(); //remove player from grid
         }
     }
     time = 0;
+
 }
 
 function moveEnemy() {
@@ -202,7 +226,31 @@ function resetBullet(bullet) {
 
 }
 
+var contains = function (needle) {
+    // Per spec, the way to identify NaN is that it is not equal to itself
+    var findNaN = needle !== needle;
+    var indexOf;
+    if (!findNaN && typeof Array.prototype.indexOf === 'function') {
+        indexOf = Array.prototype.indexOf;
+    }
+    else {
+        indexOf = function (needle) {
+            var i = -1, index = -1;
+            for (i = 0; i < this.length; i++) {
+                var item = this[i];
+                if ((findNaN && item !== item) || item === needle) {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        };
+    }
+    return indexOf.call(this, needle) > -1;
+};
+
 function update() {
+
     if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
         movementInput = "down";
     }

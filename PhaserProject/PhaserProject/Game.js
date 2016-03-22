@@ -22,18 +22,24 @@ function preload() {
     this.game.load.image('player', 'Graphics/greendude.png');
     this.game.load.image('bullet', 'Graphics/bullet.png');
     this.game.load.image('redEnemy', "Graphics/redenemy.jpg");
+    this.game.load.image('grid', "Graphics/2151465-grid.jpg");
+    this.game.load.image('player', "Graphics/greendude.png");
+    this.game.load.image('redEnemy', "Graphics/redenemy.jpg");
+    cursors = this.game.input.keyboard.createCursorKeys();
+    window.setInterval(submitMove, 3000);
+    window.setInterval(updateTimer, 300);
 }
 function create() {
     // add the 'logo' sprite to the game, position it in the
     // center of the screen, and set the anchor to the center of
     // the image so it's centered properly. There's a lot of
     // centering in that last sentence
+    //  console.log("hi");
     var style = { font: "32px Arial" };
     timeText = game.add.text(100, 0, "0", style);
     inputText = game.add.text(100, 50, "", style);
     var grid = this.game.add.sprite(0, 100, 'grid');
     player = this.game.add.sprite(0, 100, 'player');
-    player.scale.setTo(0.05, 0.05);
     //init enemies
     var a = Math.random();
     var b = Math.random();
@@ -53,6 +59,7 @@ function create() {
         tempEnemy.scale.setTo(0.3, 0.3);
         enemyArray.push(tempEnemy);
     }
+    player.scale.setTo(0.05, 0.05);
     bullets = game.add.group();
     bullets.enableBody = true;
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
@@ -60,8 +67,6 @@ function create() {
     bullets.setAll('checkWorldBounds', true);
     bullets.setAll('outOfBoundsKill', true);
     cursors = this.game.input.keyboard.createCursorKeys();
-    window.setInterval(submitMove, 3000);
-    window.setInterval(updateTimer, 300);
 }
 function updateTimer() {
     time += 300;
@@ -94,6 +99,16 @@ function submitMove() {
                 bullet.body.velocity.y = bulletVel;
         }
     }
+    movementInput = "";
+    moveEnemy();
+    if (movementInput == "right")
+        player.x += travelDist;
+    else if (movementInput == "left")
+        player.x -= travelDist;
+    else if (movementInput == "up")
+        player.y -= travelDist;
+    else if (movementInput == "down")
+        player.y += travelDist;
     movementInput = "";
     for (var r = 0; r < enemyArray.length; r++) {
         if ((Math.abs(player.x - enemyArray[r].x) <= 10) && (Math.abs(player.y - enemyArray[r].y) <= 10)) {
@@ -178,6 +193,28 @@ function resetBullet(bullet) {
     //  Called if the bullet goes out of the screen
     bullet.kill();
 }
+var contains = function (needle) {
+    // Per spec, the way to identify NaN is that it is not equal to itself
+    var findNaN = needle !== needle;
+    var indexOf;
+    if (!findNaN && typeof Array.prototype.indexOf === 'function') {
+        indexOf = Array.prototype.indexOf;
+    }
+    else {
+        indexOf = function (needle) {
+            var i = -1, index = -1;
+            for (i = 0; i < this.length; i++) {
+                var item = this[i];
+                if ((findNaN && item !== item) || item === needle) {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        };
+    }
+    return indexOf.call(this, needle) > -1;
+};
 function update() {
     if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
         movementInput = "down";

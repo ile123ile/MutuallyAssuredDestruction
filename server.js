@@ -1,11 +1,22 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+app.get('/test', function(req, res){
+  res.sendFile(__dirname + '/test.html');
 });
-
+/*function routeGameFile(URI, fileName) {
+	app.get(URI, function(req, res){
+		res.sendFile(__dirname + '/PhaserProject/PhaserProject/' + fileName);
+	});
+}
+routeGameFile('/game.html', 'index.html');
+routeGameFile('/game.js', 'game.js');
+routeGameFile('/phaser.js', 'phaser.js');
+routeGameFile('/TitleScreenState.js', 'TitleScreenState.js');
+routeGameFile('/GameObjects/Player.js', '/GameObjects/Player.js');*/
+app.use(express.static(__dirname + '/PhaserProject/PhaserProject/Public'));
 var id = 0;
 var playerWait;
 
@@ -51,6 +62,7 @@ io.on('connection', function(socket){
 			if(player.partner.move != null){
 				player.socket.emit('move', player.partner.move);
 				player.partner.socket.emit('move', player.move);
+				console.log('you both moved you fux');
 				player.partner.move = null;
 				player.move = null;
 			}
