@@ -62,6 +62,7 @@ io.on('connection', function(socket){
 			if(player.partner.move != null){
 				player.socket.emit('move', player.partner.move);
 				player.partner.socket.emit('move', player.move);
+				console.log('you both moved you fux');
 				player.partner.move = null;
 				player.move = null;
 			}
