@@ -35,12 +35,12 @@ function create() {
     //init enemies
     var a = Math.random();
     var b = Math.random();
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < 8; i++) {
         //generate random coordinates
         a = Math.random();
         b = Math.random();
         for (var count = 0; count < enemyArray.length; count++) {
-            while ((enemyArray[count].x == a && enemyArray[count].y == b) || (a == player.x && b == player.y)) {
+            while ((enemyArray[count].x == a && enemyArray[count].y == b) || (Math.abs(a - player.x) < 5 && Math.abs(b - player.y) < 5)) {
                 a = Math.random();
                 b = Math.random();
             }
@@ -69,8 +69,10 @@ function submitMove() {
         player.y += travelDist;
     movementInput = "";
     for (var r = 0; r < enemyArray.length; r++) {
-        if ((Math.abs(player.x - enemyArray[r].x) <= 10) && (Math.abs(player.y - enemyArray[r].y) <= 10)) {
+        if ((Math.abs(player.x - enemyArray[r].x) <= 5) && (Math.abs(player.y - enemyArray[r].y) <= 5)) {
             player.kill(); //remove player from grid
+            for (var v = 0; v < enemyArray.length; v++)
+                enemyArray[v].kill();
         }
     }
     time = 0;
@@ -106,16 +108,34 @@ function moveEnemy() {
                 enemyArray[count].x -= (travelDist - .1);
         }
         //make sure no two enemies occupy the same location
+        for (var c = 0; c < enemyArray.length; c++) {
+            if (c != count)
+                occupied[c] = enemyArray[c].x + 1000000 * enemyArray[c].y;
+            else
+                occupied[c] = -1;
+        }
+        var limitedOccupied = [];
+        for (var cou = 0; cou < count; cou++) {
+            limitedOccupied[cou] = enemyArray[cou].x + 1000000 * enemyArray[cou].y;
+        }
         var tries = 0;
-        while (contains.call(occupied, enemyArray[count].x + 1000000 * enemyArray[count].y)) {
-            if (tries == 0)
+        while (contains(limitedOccupied, enemyArray[count].x + 1000000 * enemyArray[count].y)) {
+            if (tries == 0) {
                 enemyArray[count].x = tempXpos - (travelDist - .1); //move it sideways -- add checking for out of bounds
-            else if (tries == 1)
+                enemyArray[count].y = tempYpos;
+            }
+            else if (tries == 1) {
                 enemyArray[count].x = tempXpos + (travelDist - .1);
-            else if (tries == 2)
+                enemyArray[count].y = tempYpos;
+            }
+            else if (tries == 2) {
                 enemyArray[count].y = tempYpos - (travelDist - .1);
-            else if (tries == 3)
+                enemyArray[count].x = tempXpos;
+            }
+            else if (tries == 3) {
                 enemyArray[count].y = tempYpos + (travelDist - .1);
+                enemyArray[count].x = tempXpos;
+            }
             else {
                 enemyArray[count].x = tempXpos;
                 enemyArray[count].y = tempYpos;
@@ -125,28 +145,41 @@ function moveEnemy() {
         occupied[count] = enemyArray[count].x + 1000000 * enemyArray[count].y;
     }
 }
-var contains = function (needle) {
+function contains(a, obj) {
+    for (var i = 0; i < a.length; i++) {
+        if (Math.abs(a[i] - obj) < 3) {
+            return true;
+        }
+    }
+    return false;
+}
+/*var contains = function (needle) {
     // Per spec, the way to identify NaN is that it is not equal to itself
     var findNaN = needle !== needle;
     var indexOf;
+
     if (!findNaN && typeof Array.prototype.indexOf === 'function') {
         indexOf = Array.prototype.indexOf;
-    }
-    else {
+    } else {
         indexOf = function (needle) {
             var i = -1, index = -1;
+
             for (i = 0; i < this.length; i++) {
                 var item = this[i];
-                if ((findNaN && item !== item) || item === needle) {
+
+                if ((findNaN && item !== item) || Math.abs(item-needle)<3) {
                     index = i;
                     break;
                 }
             }
+
             return index;
         };
     }
+    
     return indexOf.call(this, needle) > -1;
 };
+*/
 function update() {
     if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
         movementInput = "down";
