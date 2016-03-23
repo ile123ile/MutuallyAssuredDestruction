@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.css" />
+    <Content Include="Graphics\bullet.png" />
     <Content Include="Graphics\2151465-grid.jpg" />
     <Content Include="Graphics\greenSquare.png" />
     <Content Include="Graphics\original.png" />
