@@ -22,7 +22,7 @@ var playerWait;
 
 io.on('connection', function(socket){
 	var pid = id++;
-	var player = {socket: socket, pid: pid};
+	var player = {socket: socket, pid: pid, move: ''};
 	var moveInterval;
 	if(playerWait == null)
 	{
