@@ -23,14 +23,15 @@ var playerWait;
 io.on('connection', function(socket){
 	var pid = id++;
 	var player = {socket: socket, pid: pid};
+	var moveInterval;
 	if(playerWait == null)
 	{
 		playerWait = player;
 	}
 	else
 	{
-		socket.emit('move', 'You are head. You connected with body ' + playerWait.pid);
-		playerWait.socket.emit('move', 'You are body. You connected with head ' + pid);
+		socket.emit('message', 'You are head. You connected with body ' + playerWait.pid);
+		playerWait.socket.emit('message', 'You are body. You connected with head ' + pid);
 		player.partner = playerWait;
 		playerWait.partner = player;
 		var game = {
@@ -38,10 +39,19 @@ io.on('connection', function(socket){
 			body: playerWait.pid,
 			level: 1 
 		};
+		player.isHead = true;
+		playerWait.isBody = true;
 		console.log(player.pid+' connected with '+playerWait.pid);
 
 
 		playerWait = null;
+		moveInterval = setInterval(function(){
+			moves = {'head':player.move, 'body':player.partner.move};
+			player.socket.emit('move', moves);
+			player.partner.socket.emit('move', moves);
+			player.move = '';
+			player.partner.move = '';
+		}, 3*1000);
 	}
 	console.log(pid+': a user connected');
 	socket.on('disconnect', function(){
@@ -54,8 +64,12 @@ io.on('connection', function(socket){
 		{
 			playerWait = null;
 		}
+		if(player.isHead === true)
+		{
+			clearInterval(moveInterval);
+		}
 	});
-	socket.on('move', function(msg, fn){
+	/*socket.on('move', function(msg, fn){
 		console.log('message: '+msg);
 		player.move = msg;
 		if(player.partner != null){
@@ -71,6 +85,9 @@ io.on('connection', function(socket){
 				fn('received');
 			}
 		}
+	});*/
+	socket.on('move', function(msg){
+		player.move = msg;
 	});
 });
 
