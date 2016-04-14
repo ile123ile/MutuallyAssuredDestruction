@@ -58,7 +58,7 @@ io.on('connection', function(socket){
 		console.log(pid+': a user disconnected');
 		if(player.partner != null)
 		{
-			player.partner.socket.emit('message', 'Warning: haha you fucker your partner left');
+			player.partner.socket.emit('message', 'Warning: haha you fucker');
 		}
 		if(playerWait != null && playerWait.pid === player.pid)
 		{
@@ -91,6 +91,8 @@ io.on('connection', function(socket){
 	});
 });
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+
+
+http.listen((process.env.PORT || 3000), function(){
+  console.log('listening on *: '+ (process.env.PORT || 3000));
 });
