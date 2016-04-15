@@ -58,7 +58,7 @@ io.on('connection', function(socket){
 		console.log(pid+': a user disconnected');
 		if(player.partner != null)
 		{
-			player.partner.socket.emit('message', 'Warning: haha you fucker');
+			player.partner.socket.emit('message', 'Warning: haha you fucker ducker');
 		}
 		if(playerWait != null && playerWait.pid === player.pid)
 		{
