@@ -4,7 +4,7 @@ var cursors;
 var player;
 var travelDist = 53.5;
 var movementInput = "";
-var time=0;
+var time = 0;
 var timeText;
 var inputText;
 var maxTime = 0;
@@ -13,6 +13,11 @@ var occupied = []; // xcoord + 1000000* ycoord
 var role = "shooting";
 var bullets;
 var bulletVel = 900;
+var field = [15][15];
+var canvas = <HTMLCanvasElement>document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
+
 
 function preload() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -39,7 +44,7 @@ function create() {
     // center of the screen, and set the anchor to the center of
     // the image so it's centered properly. There's a lot of
     // centering in that last sentence
-  //  console.log("hi");
+    //  console.log("hi");
 
     var style = { font: "32px Arial" };
     timeText = game.add.text(100, 0, "0", style);
@@ -47,29 +52,7 @@ function create() {
     var grid = this.game.add.sprite(0, 100, 'grid');
     player = this.game.add.sprite(0, 100, 'player');
 
-    //init enemies
-    var a = Math.random();
-    var b = Math.random();
-    for (var i = 0; i < 8; i++) {
-        //generate random coordinates
-        
-        a = Math.random();
-        b = Math.random();
-         
-        for (var count = 0; count < enemyArray.length; count++) {
-            while ((enemyArray[count].x == a && enemyArray[count].y == b) || (Math.abs(a-player.x)<5 && Math.abs(b-player.y)<5)) {
-                a = Math.random();
-                b = Math.random();
-            }
-            
-        }
-        //  var tempEnemy = (this.game.add.sprite(travelDist * randomX, travelDist * randomY+100, 'redEnemy'));
-        occupied.push(4 + (travelDist - .1) * Math.round(a * 14) + 1000000 * (100 + 4 + (travelDist - .1) * Math.round(b * 14)));
-        var tempEnemy = (this.game.add.sprite(4 + (travelDist-.1) * Math.round(a * 14), 100 + 4 + (travelDist-.1)*Math.round(b * 14), 'redEnemy'));
-
-        tempEnemy.scale.setTo(0.3, 0.3);
-        enemyArray.push(tempEnemy);
-    }
+   
 
     player.scale.setTo(0.05, 0.05);
 
@@ -84,12 +67,24 @@ function create() {
 
     cursors = this.game.input.keyboard.createCursorKeys();
 }
- 
+
 function updateTimer() {
     time += 300;
     timeText.setText(time);
 }
 
+function setup() {
+    //init enemies
+    for (var i = 0; i < 8; i++) {
+        var a = Math.random();
+        var b = Math.random();
+        while (field[a][b] != 0) {
+            var a = Math.random();
+            var b = Math.random();
+        }
+        field[a][b] = 2;
+    }
+}
 
 function submitMove() {
     moveEnemy();
@@ -106,18 +101,18 @@ function submitMove() {
             player.y += travelDist;
     }
     else if (role == "shooting") {
-        
+
         if (movementInput != "") {
 
             var bullet = bullets.getFirstDead();
 
 
-            bullet.reset(player.x+player.width/2-bullet.width/2, player.y+player.height/2-bullet.height/2);
+            bullet.reset(player.x + player.width / 2 - bullet.width / 2, player.y + player.height / 2 - bullet.height / 2);
 
             if (movementInput == "right")
                 bullet.body.velocity.x = bulletVel;
             else if (movementInput == "left")
-                bullet.body.velocity.x = -1*bulletVel;
+                bullet.body.velocity.x = -1 * bulletVel;
             else if (movementInput == "up")
                 bullet.body.velocity.y = -bulletVel;
             else if (movementInput == "down")
@@ -126,8 +121,8 @@ function submitMove() {
     }
 
     movementInput = "";
-    
-   
+
+
     if (movementInput == "right")
         player.x += travelDist;
     else if (movementInput == "left")
@@ -145,6 +140,10 @@ function submitMove() {
         }
     }
     time = 0;
+    var send = {player, enemyArray};
+    send.player = { x: 2, y: 2 };
+    send.enemyArray = [{ x: 4, y: 4 }, { x: 7, y: 7 }, { x: 8, y: 8 }, { x: 10, y: 10 }];
+    updateData(send);
 
 }
 
@@ -190,7 +189,7 @@ function moveEnemy() {
             limitedOccupied[cou] = enemyArray[cou].x + 1000000 * enemyArray[cou].y;
         }
         var tries = 0;
-       
+
         while (contains(limitedOccupied, enemyArray[count].x + 1000000 * enemyArray[count].y)) {
             if (tries == 0) {
                 enemyArray[count].x = tempXpos - (travelDist - .1);//move it sideways -- add checking for out of bounds
@@ -209,7 +208,7 @@ function moveEnemy() {
                 enemyArray[count].y = tempYpos + (travelDist - .1);
                 enemyArray[count].x = tempXpos;
             }
-            else { 
+            else {
                 enemyArray[count].x = tempXpos;
                 enemyArray[count].y = tempYpos;
             }
@@ -221,7 +220,7 @@ function moveEnemy() {
 
 function contains(a, obj) {
     for (var i = 0; i < a.length; i++) {
-        if (Math.abs(a[i]-obj)<3) {
+        if (Math.abs(a[i] - obj) < 3) {
             return true;
         }
     }
@@ -239,7 +238,6 @@ function contains(a, obj) {
             var i = -1, index = -1;
             for (i = 0; i < this.length; i++) {
                 var item = this[i];
-
                 if ((findNaN && item !== item) || item === needle) {
                    index = i;
                     break;
@@ -259,6 +257,7 @@ function resetBullet(bullet) {
 
 function update() {
 
+
     if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
         movementInput = "down";
     }
@@ -277,5 +276,14 @@ function update() {
         else if (role == "shooting")
             role = "moving";
     }
-    inputText.setText(movementInput+"   "+role);
+    inputText.setText(movementInput + "   " + role);
+}
+
+function updateData(data) {
+    player.x = data.player.x*travelDist;
+    player.y = 100+data.player.y*travelDist;
+    for (var i = 0; i < enemyArray.length; i++) {
+        enemyArray[i].x = data.enemyArray[i].x*travelDist;
+        enemyArray[i].y = 100+data.enemyArray[i].y*travelDist;
+    }
 }

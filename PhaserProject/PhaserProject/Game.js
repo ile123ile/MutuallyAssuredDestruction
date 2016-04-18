@@ -12,6 +12,9 @@ var occupied = []; // xcoord + 1000000* ycoord
 var role = "shooting";
 var bullets;
 var bulletVel = 900;
+var field = [15][15];
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
 function preload() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
     // add our logo image to the assets class under the
@@ -40,25 +43,6 @@ function create() {
     inputText = game.add.text(100, 50, "", style);
     var grid = this.game.add.sprite(0, 100, 'grid');
     player = this.game.add.sprite(0, 100, 'player');
-    //init enemies
-    var a = Math.random();
-    var b = Math.random();
-    for (var i = 0; i < 8; i++) {
-        //generate random coordinates
-        a = Math.random();
-        b = Math.random();
-        for (var count = 0; count < enemyArray.length; count++) {
-            while ((enemyArray[count].x == a && enemyArray[count].y == b) || (Math.abs(a - player.x) < 5 && Math.abs(b - player.y) < 5)) {
-                a = Math.random();
-                b = Math.random();
-            }
-        }
-        //  var tempEnemy = (this.game.add.sprite(travelDist * randomX, travelDist * randomY+100, 'redEnemy'));
-        occupied.push(4 + (travelDist - .1) * Math.round(a * 14) + 1000000 * (100 + 4 + (travelDist - .1) * Math.round(b * 14)));
-        var tempEnemy = (this.game.add.sprite(4 + (travelDist - .1) * Math.round(a * 14), 100 + 4 + (travelDist - .1) * Math.round(b * 14), 'redEnemy'));
-        tempEnemy.scale.setTo(0.3, 0.3);
-        enemyArray.push(tempEnemy);
-    }
     player.scale.setTo(0.05, 0.05);
     bullets = game.add.group();
     bullets.enableBody = true;
@@ -71,6 +55,18 @@ function create() {
 function updateTimer() {
     time += 300;
     timeText.setText(time);
+}
+function setup() {
+    //init enemies
+    for (var i = 0; i < 8; i++) {
+        var a = Math.random();
+        var b = Math.random();
+        while (field[a][b] != 0) {
+            var a = Math.random();
+            var b = Math.random();
+        }
+        field[a][b] = 2;
+    }
 }
 function submitMove() {
     moveEnemy();
@@ -117,6 +113,10 @@ function submitMove() {
         }
     }
     time = 0;
+    var send = { player: player, enemyArray: enemyArray };
+    send.player = { x: 2, y: 2 };
+    send.enemyArray = [{ x: 4, y: 4 }, { x: 7, y: 7 }, { x: 8, y: 8 }, { x: 10, y: 10 }];
+    updateData(send);
 }
 function moveEnemy() {
     //update enemies' moves
@@ -206,7 +206,6 @@ function contains(a, obj) {
             var i = -1, index = -1;
             for (i = 0; i < this.length; i++) {
                 var item = this[i];
-
                 if ((findNaN && item !== item) || item === needle) {
                    index = i;
                     break;
@@ -240,5 +239,13 @@ function update() {
             role = "moving";
     }
     inputText.setText(movementInput + "   " + role);
+}
+function updateData(data) {
+    player.x = data.player.x * travelDist;
+    player.y = 100 + data.player.y * travelDist;
+    for (var i = 0; i < enemyArray.length; i++) {
+        enemyArray[i].x = data.enemyArray[i].x * travelDist;
+        enemyArray[i].y = 100 + data.enemyArray[i].y * travelDist;
+    }
 }
 //# sourceMappingURL=game.js.map
