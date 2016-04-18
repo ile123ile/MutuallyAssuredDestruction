@@ -140,10 +140,11 @@ function submitMove() {
         }
     }
     time = 0;
-    var send = {player, enemyArray};
+    var send = { player, enemyArray };
     send.player = { x: 2, y: 2 };
     send.enemyArray = [{ x: 4, y: 4 }, { x: 7, y: 7 }, { x: 8, y: 8 }, { x: 10, y: 10 }];
     updateData(send);
+
 
 }
 
@@ -280,10 +281,10 @@ function update() {
 }
 
 function updateData(data) {
-    player.x = data.player.x*travelDist;
-    player.y = 100+data.player.y*travelDist;
+    player.x = data.player.x * travelDist;
+    player.y = 100 + data.player.y * travelDist;
     for (var i = 0; i < enemyArray.length; i++) {
-        enemyArray[i].x = data.enemyArray[i].x*travelDist;
-        enemyArray[i].y = 100+data.enemyArray[i].y*travelDist;
+        enemyArray[i].x = data.enemyArray[i].x * travelDist;
+        enemyArray[i].y = 100 + data.enemyArray[i].y * travelDist;
     }
 }
