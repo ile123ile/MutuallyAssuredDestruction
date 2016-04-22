@@ -20,6 +20,41 @@ app.use(express.static(__dirname + '/PhaserProject/PhaserProject/Public'));
 var id = 0;
 var playerWait;
 
+function randomRange(min, max)
+{
+	return Math.floor(Math.random()*(max-min+1)+min);
+}
+
+function makeEnemies(game, numEnemies, min, max)
+{
+	game.enemyArray = [];
+	for (var i = 0; i < numEnemies; i++) {
+    	//generate random coordinates
+        a = randomRange(min, max);
+        b = randomRange(min, max);
+        for (var count = 0; count < game.enemyArray.length; count++) {
+            while ((game.enemyArray[count].x == a && game.enemyArray[count].y == b)) {
+                a = randomRange(min, max);
+                b = randomRange(min, max);
+            }
+        }
+        var enemy = {x: a, y: b, name: 'redEnemy'};
+        game.enemyArray.push(enemy);
+    }
+}
+
+function createGame(headPid, bodyPid, level)
+{
+	game = {head: headPid, body: bodyPid, level: level, hasBegun: false};
+	makeEnemies(game, 8, 5, 14);
+	return game;
+}
+
+function updateGame(game)
+{
+
+}
+
 io.on('connection', function(socket){
 	var pid = id++;
 	var player = {socket: socket, pid: pid, move: ''};
@@ -34,21 +69,27 @@ io.on('connection', function(socket){
 		playerWait.socket.emit('message', 'You are body. You connected with head ' + pid);
 		player.partner = playerWait;
 		playerWait.partner = player;
-		var game = {
-			head: player.pid, 
-			body: playerWait.pid,
-			level: 1 
-		};
+		var game = createGame(player.pid, playerWait.pid, 1);
+		player.game = game;
+		playerWait.game = game;
 		player.isHead = true;
 		playerWait.isBody = true;
 		console.log(player.pid+' connected with '+playerWait.pid);
-
+		console.log(game);
 
 		playerWait = null;
 		moveInterval = setInterval(function(){
+			if(!game.hasBegun)
+			{
+				game.hasBegun = true;
+				player.socket.emit('begin', game);
+				player.partner.socket.emit('begin', game);
+			}
 			moves = {'head':player.move, 'body':player.partner.move};
-			player.socket.emit('move', moves);
-			player.partner.socket.emit('move', moves);
+			game.moves = moves;
+			updateGame(game);
+			player.socket.emit('move', game);
+			player.partner.socket.emit('move', game);
 			player.move = '';
 			player.partner.move = '';
 		}, 3*1000);

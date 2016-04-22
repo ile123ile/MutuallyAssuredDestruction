@@ -42,25 +42,6 @@ function create() {
     inputText = game.add.text(100, 50, "", style);
     var grid = this.game.add.sprite(0, 100, 'grid');
     player = this.game.add.sprite(0, 100, 'player');
-    //init enemies
-    var a = Math.random();
-    var b = Math.random();
-    for (var i = 0; i < 8; i++) {
-        //generate random coordinates
-        a = Math.random();
-        b = Math.random();
-        for (var count = 0; count < enemyArray.length; count++) {
-            while ((enemyArray[count].x == a && enemyArray[count].y == b) || (Math.abs(a - player.x) < 5 && Math.abs(b - player.y) < 5)) {
-                a = Math.random();
-                b = Math.random();
-            }
-        }
-        //  var tempEnemy = (this.game.add.sprite(travelDist * randomX, travelDist * randomY+100, 'redEnemy'));
-        occupied.push(4 + (travelDist - .1) * Math.round(a * 14) + 1000000 * (100 + 4 + (travelDist - .1) * Math.round(b * 14)));
-        var tempEnemy = (this.game.add.sprite(4 + (travelDist - .1) * Math.round(a * 14), 100 + 4 + (travelDist - .1) * Math.round(b * 14), 'redEnemy'));
-        tempEnemy.scale.setTo(0.3, 0.3);
-        enemyArray.push(tempEnemy);
-    }
     player.scale.setTo(0.05, 0.05);
     bullets = game.add.group();
     bullets.enableBody = true;
@@ -70,12 +51,22 @@ function create() {
     bullets.setAll('outOfBoundsKill', true);
     cursors = this.game.input.keyboard.createCursorKeys();
 
+    socket.on('begin', function(gameData){
+        enemyArray = gameData.enemyArray;
+        for(var i = 0; i < gameData.enemyArray.length; i++)
+        {
+            var enemyData = gameData.enemyArray[i];
+            var tempEnemy = game.add.sprite(4 + (travelDist - .1) * enemyData.x * 14, 100 + 4 + (travelDist - .1) * enemyData.y, enemyData.level);
+            enemyArray[i] = tempEnemy;
+            console.log(enemyData);
+        }
+    });
     socket.on('message', function(msg){
         messageText = msg;
     });
-    socket.on('move', function(msg){
-        movementInput = msg['body'];
-        shootingInput = msg['head'];
+    socket.on('move', function(game){
+        movementInput = game.moves['body'];
+        shootingInput = game.moves['head'];
         submitMove();
     });
 }
