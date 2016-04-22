@@ -56,9 +56,10 @@ function create() {
         for(var i = 0; i < gameData.enemyArray.length; i++)
         {
             var enemyData = gameData.enemyArray[i];
-            var tempEnemy = game.add.sprite(4 + (travelDist - .1) * enemyData.x * 14, 100 + 4 + (travelDist - .1) * enemyData.y, enemyData.level);
+            var tempEnemy = game.add.sprite(4 + (travelDist - .1) * enemyData.x, 100 + 4 + (travelDist - .1) * enemyData.y, enemyData.name);
+            tempEnemy.scale.setTo(0.3, 0.3);
             enemyArray[i] = tempEnemy;
-            console.log(enemyData);
+            console.log((4 + (travelDist - .1) * enemyData.x) + "," + (100 + 4 + (travelDist - .1) * enemyData.y) + "," + enemyData.name);
         }
     });
     socket.on('message', function(msg){
