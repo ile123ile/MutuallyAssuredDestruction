@@ -46,12 +46,73 @@ function makeEnemies(game, numEnemies, min, max)
 function createGame(headPid, bodyPid, level)
 {
 	game = {head: headPid, body: bodyPid, level: level, hasBegun: false};
+	game.player = {x: 0, y: 0};
 	makeEnemies(game, 8, 5, 14);
 	return game;
 }
 
+function movePlayer(game)
+{
+	if(game.moves.body == 'left')
+	{
+		game.player.x--;
+	}
+	else if(game.moves.body == 'right')
+	{
+		game.player.x++;
+	}
+	else if(game.moves.body == 'down')
+	{
+		game.player.y--;
+	}
+	else if(game.moves.body == 'up')
+	{
+		game.player.y++;
+	}
+}
+
+function moveEnemies(game)
+{
+	var player = game.player;
+	for(var i = 0; i < game.enemyArray.length; i++)
+	{
+		var newPos = {x: game.enemyArray[i].x, y: game.enemyArray[i].y};
+		if(player.x > newPos.x)
+		{
+			newPos.x++;
+		}
+		else if(player.x < newPos.x)
+		{
+			newPos.x--;
+		}
+		else if(player.y > newPos.y)
+		{
+			newPos.y++;
+		}
+		else
+		{
+			newPos.y--;
+		}
+		var isGood = true;
+		for(var j = 0; j < i; j++)
+		{
+			if(game.enemyArray[j].x == newPos.x && game.enemyArray[j].y == newPos.y)
+			{
+				isGood = false;
+			}
+		}
+		if(isGood)
+		{
+			game.enemyArray[i].x = newPos.x;
+			game.enemyArray[i].y = newPos.y;
+		}
+	}
+}
+
 function updateGame(game)
 {
+	movePlayer(game);
+	moveEnemies(game);
 
 }
 

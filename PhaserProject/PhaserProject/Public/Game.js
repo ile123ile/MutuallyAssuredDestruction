@@ -52,6 +52,8 @@ function create() {
     cursors = this.game.input.keyboard.createCursorKeys();
 
     socket.on('begin', function(gameData){
+        player.x = gameData.player.x * (travelDist - .1);
+        player.y = gameData.player.y * (travelDist - .1) + 100 + 4;
         enemyArray = gameData.enemyArray;
         for(var i = 0; i < gameData.enemyArray.length; i++)
         {
@@ -61,14 +63,24 @@ function create() {
             enemyArray[i] = tempEnemy;
             console.log((4 + (travelDist - .1) * enemyData.x) + "," + (100 + 4 + (travelDist - .1) * enemyData.y) + "," + enemyData.name);
         }
+        time = 0;
+        timeText.setText(time);
     });
     socket.on('message', function(msg){
         messageText = msg;
     });
-    socket.on('move', function(game){
-        movementInput = game.moves['body'];
-        shootingInput = game.moves['head'];
-        submitMove();
+    socket.on('move', function(gameData){
+        player.x = gameData.player.x * (travelDist - .1);
+        player.y = gameData.player.y * (travelDist - .1) + 100 + 4;
+        for(var i = 0; i < gameData.enemyArray.length; i++)
+        {
+            var enemyData = gameData.enemyArray[i];
+            enemyArray[i].x = 4 + (travelDist - .1) * enemyData.x;
+            enemyArray[i].y = 100 + 4 + (travelDist - .1) * enemyData.y;
+            console.log((4 + (travelDist - .1) * enemyData.x) + "," + (100 + 4 + (travelDist - .1) * enemyData.y) + "," + enemyData.name);
+        }
+        time = 0;
+        timeText.setText(time);
     });
 }
 function updateTimer() {
