@@ -63,77 +63,78 @@ function movePlayer(game)
 	}
 	else if(game.moves.body == 'down')
 	{
-		game.player.y--;
+		game.player.y++;
 	}
 	else if(game.moves.body == 'up')
 	{
-		game.player.y++;
+		game.player.y--;
 	}
+}
+
+function moveEnemy(game, enemyId)
+{
+	var player = game.player;
+	var enemy = game.enemyArray[enemyId];
+	var tempX = enemy.x;
+	var tempY = enemy.y;
+	var xDist = player.x-enemy.x;
+	var yDist = player.y-enemy.y;
+	if(Math.abs(xDist)>Math.abs(yDist))
+	{
+		if(xDist > 0)
+		{
+			tempX++;
+		}
+		else
+		{
+			tempX--;
+		}
+	}
+	else
+	{
+		if(yDist > 0)
+		{
+			tempY++;
+		}
+		else
+		{
+			tempY--;
+		}
+	}
+	for(var i = 0; i < game.enemyArray.length; i++)
+	{
+		if(i==enemyId)
+			continue;
+		var other = game.enemyArray[i];
+		if(tempX==other.x&&tempY==other.y)
+		{
+			return false;
+		}
+	}
+	enemy.x = tempX;
+	enemy.y = tempY;
+	return true;
 }
 
 function moveEnemies(game)
 {
-	var player = game.player;
 	var enemyArray = game.enemyArray;
-    //update enemies' moves
-    var tempXpos, tempYpos;
-    for (var count = 0; count < enemyArray.length; count++) {
-        tempXpos = enemyArray[count].x;
-        tempYpos = enemyArray[count].y;
-        if (Math.abs(player.y - enemyArray[count].y) < 5) {
-            if (enemyArray[count].x > player.x)
-                enemyArray[count].x --;
-            else
-                enemyArray[count].x ++;
-        }
-        else if (Math.abs(player.x - enemyArray[count].x) < 5) {
-            if (enemyArray[count].y > player.y)
-                enemyArray[count].y --;
-            else
-                enemyArray[count].y ++;
-        }
-        else if (Math.abs(Math.atan((player.y - enemyArray[count].y) / (player.x - enemyArray[count].x))) > (Math.PI / 4)) {
-            if (enemyArray[count].y < player.y)
-                enemyArray[count].y ++;
-            else
-                enemyArray[count].y --;
-        }
-        else {
-            if (enemyArray[count].x < player.x)
-                enemyArray[count].x ++;
-            else
-                enemyArray[count].x --;
-        }
-        var limitedOccupied = [];
-        for (var cou = 0; cou < count; cou++) {
-            limitedOccupied[cou] = enemyArray[cou].x + 1000000 * enemyArray[cou].y;
-        }
-        var tries = 0;
-        while (contains(limitedOccupied, enemyArray[count].x + 1000000 * enemyArray[count].y)) {
-            if (tries == 0) {
-                enemyArray[count].x = tempXpos - 1; //move it sideways -- add checking for out of bounds
-                enemyArray[count].y = tempYpos;
-            }
-            else if (tries == 1) {
-                enemyArray[count].x = tempXpos + 1;
-                enemyArray[count].y = tempYpos;
-            }
-            else if (tries == 2) {
-                enemyArray[count].y = tempYpos - 1;
-                enemyArray[count].x = tempXpos;
-            }
-            else if (tries == 3) {
-                enemyArray[count].y = tempYpos + 1;
-                enemyArray[count].x = tempXpos;
-            }
-            else {
-                enemyArray[count].x = tempXpos;
-                enemyArray[count].y = tempYpos;
-                break;
-            }
-            tries++;
-        }
-    }
+	var somethingMoved=true;
+	var moved = [];
+	while(somethingMoved)
+	{
+		somethingMoved = false;
+	    for(var i = 0; i < enemyArray.length; i++)
+    	{
+    		if(moved[i])
+    			continue;
+	    	if(moveEnemy(game, i))
+    		{
+    			somethingMoved = true;
+    			moved[i] = true;
+ 	   		}
+    	}
+	}
 }
 function contains(a, obj) {
     for (var i = 0; i < a.length; i++) {
