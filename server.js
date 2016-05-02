@@ -73,7 +73,6 @@ function movePlayer(game)
 
 function moveEnemy(game, enemyId)
 {
-    var lost = 0;
 	var player = game.player;
 	var enemy = game.enemyArray[enemyId];
 	var tempX = enemy.x;
@@ -116,7 +115,7 @@ function moveEnemy(game, enemyId)
 	enemy.y = tempY;
 	if(enemy.x == player.x && enemy.y == player.y)
 	{
-		player.isDead = true
+		player.isDead = true;
 	}
 	return true;
 }
@@ -141,9 +140,6 @@ function moveEnemies(game)
  	   		}
     	}
 	}
-	if (lost == 2)
-	    return 2;
-	return 1;
 }
 
 function killEnemies(game)
@@ -202,15 +198,8 @@ function contains(a, obj) {
 function updateGame(game)
 {
 	movePlayer(game);
-	if (moveEnemies(game) == 2) {
-	    console.log('died');
-	    game.player.isDead = true;
-	    game.player = null;
-	    return 0;
-	}
+	moveEnemies(game);
 	killEnemies(game);
-
-	return 1;
 }
 
 io.on('connection', function(socket){
@@ -245,16 +234,17 @@ io.on('connection', function(socket){
 			}
 			moves = {'head':player.move, 'body':player.partner.move};
 			game.moves = moves;
-			if (!updateGame(game)) {
+			updateGame(game);
+			if (player.isDead) {
 			    console.log('entered section');
 			    player.socket.emit('message', 'You lost');
 			    player.partner.socket.emit('message', 'You also lost');
 			    return;
 			}
-			    player.socket.emit('move', game);
-			    player.partner.socket.emit('move', game);
-			    player.move = '';
-			    player.partner.move = '';
+			player.socket.emit('move', game);
+			player.partner.socket.emit('move', game);
+			player.move = '';
+			player.partner.move = '';
 		}, 3*1000);
 	}
 	console.log(pid+': a user connected');
