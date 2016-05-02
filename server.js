@@ -38,7 +38,7 @@ function makeEnemies(game, numEnemies, min, max)
                 b = randomRange(min, max);
             }
         }
-        var enemy = {x: a, y: b, name: 'redEnemy'};
+        var enemy = {x: a, y: b, isDead: false, name: 'redEnemy'};
         game.enemyArray.push(enemy);
     }
 }
@@ -113,6 +113,10 @@ function moveEnemy(game, enemyId)
 	}
 	enemy.x = tempX;
 	enemy.y = tempY;
+	if(enemy.x == player.x && enemy.y == player.y)
+	{
+		player.isDead = true
+	}
 	return true;
 }
 
@@ -136,6 +140,51 @@ function moveEnemies(game)
     	}
 	}
 }
+
+function killEnemies(game)
+{
+	var dir = game.moves.head;
+	var player = game.player;
+	var closest = null;
+	var closestDist = 1000000;
+	for(var i = 0; i < game.enemyArray.length; i++)
+	{
+		var enemy = game.enemyArray[i];
+		if(dir == 'left')
+		{
+			if(enemy.y == player.y && player.x > enemy.x && player.x - enemy.x < closestDist)
+			{
+				closest = enemy;
+			}
+		}
+		else if(dir == 'right')
+		{
+			if(enemy.y == player.y && player.x < enemy.x && enemy.x - player.x < closestDist)
+			{
+				closest = enemy;
+			}
+		}
+		else if(dir == 'down')
+		{
+			if(enemy.x == player.x && player.y < enemy.y && enemy.y - player.y < closestDist)
+			{
+				closest = enemy;
+			}
+		}
+		else if(dir == 'up')
+		{
+			if(enemy.x == player.x && player.y > enemy.y && player.y - enemy.y < closestDist)
+			{
+				closest = enemy;
+			}
+		}
+	}
+	if(closest != null)
+	{
+		closest.isDead = true;
+	}
+}
+
 function contains(a, obj) {
     for (var i = 0; i < a.length; i++) {
         if (Math.abs(a[i] - obj) < 3) {
@@ -149,7 +198,7 @@ function updateGame(game)
 {
 	movePlayer(game);
 	moveEnemies(game);
-
+	killEnemies(game);
 }
 
 io.on('connection', function(socket){

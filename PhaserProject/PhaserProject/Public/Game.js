@@ -75,9 +75,17 @@ function create() {
         for(var i = 0; i < gameData.enemyArray.length; i++)
         {
             var enemyData = gameData.enemyArray[i];
-            enemyArray[i].x = 4 + (travelDist - .1) * enemyData.x;
-            enemyArray[i].y = 100 + 4 + (travelDist - .1) * enemyData.y;
-            console.log((4 + (travelDist - .1) * enemyData.x) + "," + (100 + 4 + (travelDist - .1) * enemyData.y) + "," + enemyData.name);
+            if(enemyData.isDead)
+            {
+                enemyArray[i].x = -1000;
+                enemyArray[i].y = -1000;
+            }
+            else
+            {
+                enemyArray[i].x = 4 + (travelDist - .1) * enemyData.x;
+                enemyArray[i].y = 100 + 4 + (travelDist - .1) * enemyData.y;
+                console.log((4 + (travelDist - .1) * enemyData.x) + "," + (100 + 4 + (travelDist - .1) * enemyData.y) + "," + enemyData.name);
+            }
         }
         time = 0;
         timeText.setText(time);
