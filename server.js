@@ -63,16 +63,17 @@ function movePlayer(game)
 	}
 	else if(game.moves.body == 'down')
 	{
-		game.player.y--;
+		game.player.y++;
 	}
 	else if(game.moves.body == 'up')
 	{
-		game.player.y++;
+		game.player.y--;
 	}
 }
 
 function moveEnemies(game)
 {
+    var lost = 0;
 	var player = game.player;
 	var enemyArray = game.enemyArray;
     //update enemies' moves
@@ -133,7 +134,17 @@ function moveEnemies(game)
             }
             tries++;
         }
+        if ((Math.abs(enemyArray[count].x - player.x)==0) && Math.abs(enemyArray[count].y-player.y)==0)
+        {
+          
+            lost = 2
+        }
+        
+
     }
+    if (lost == 2)
+        return 2;
+    return 1;
 }
 function contains(a, obj) {
     for (var i = 0; i < a.length; i++) {
@@ -147,8 +158,13 @@ function contains(a, obj) {
 function updateGame(game)
 {
 	movePlayer(game);
-	moveEnemies(game);
-
+	if (moveEnemies(game) == 2) {
+	    console.log('died');
+	    game.player.isDead = true;
+	    game.player = null;
+	    return 0;
+	}
+	return 1;
 }
 
 io.on('connection', function(socket){
@@ -183,11 +199,16 @@ io.on('connection', function(socket){
 			}
 			moves = {'head':player.move, 'body':player.partner.move};
 			game.moves = moves;
-			updateGame(game);
-			player.socket.emit('move', game);
-			player.partner.socket.emit('move', game);
-			player.move = '';
-			player.partner.move = '';
+			if (!updateGame(game)) {
+			    console.log('entered section');
+			    player.socket.emit('message', 'You lost');
+			    player.partner.socket.emit('message', 'You also lost');
+			    return;
+			}
+			    player.socket.emit('move', game);
+			    player.partner.socket.emit('move', game);
+			    player.move = '';
+			    player.partner.move = '';
 		}, 3*1000);
 	}
 	console.log(pid+': a user connected');
