@@ -235,16 +235,16 @@ io.on('connection', function(socket){
 			moves = {'head':player.move, 'body':player.partner.move};
 			game.moves = moves;
 			updateGame(game);
-			if (player.isDead) {
-			    console.log('entered section');
-			    player.socket.emit('message', 'You lost');
-			    player.partner.socket.emit('message', 'You also lost');
-			    return;
-			}
 			player.socket.emit('move', game);
 			player.partner.socket.emit('move', game);
 			player.move = '';
 			player.partner.move = '';
+			if (game.player.isDead) {
+			    console.log('entered section');
+			    player.socket.emit('message', 'You lost');
+			    player.partner.socket.emit('message', 'You also lost');    
+			    clearInterval(moveInterval);
+			}
 		}, 3*1000);
 	}
 	console.log(pid+': a user connected');
