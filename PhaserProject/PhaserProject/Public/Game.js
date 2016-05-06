@@ -75,12 +75,12 @@ function create() {
         for(var i = 0; i < gameData.enemyArray.length; i++)
         {
             var enemyData = gameData.enemyArray[i];
-            if(enemyData.isDead)
+            if(enemyData.isDying)
             {
                 enemyArray[i].x = -1000;
                 enemyArray[i].y = -1000;
             }
-            else
+            else if(!enemyData.isDead)
             {
                 enemyArray[i].x = 4 + (travelDist - .1) * enemyData.x;
                 enemyArray[i].y = 100 + 4 + (travelDist - .1) * enemyData.y;
@@ -89,6 +89,19 @@ function create() {
         }
         time = 0;
         timeText.setText(time);
+        if(gameData.moves.head != '')
+        {
+            var bullet = bullets.getFirstDead();
+            bullet.reset(player.x + player.width / 2 - bullet.width / 2, player.y + player.height / 2 - bullet.height / 2);
+        }
+        if (gameData.moves.head == "right")
+            bullet.body.velocity.x = bulletVel;
+        else if (gameData.moves.head == "left")
+            bullet.body.velocity.x = -1 * bulletVel;
+        else if (gameData.moves.head == "up")
+            bullet.body.velocity.y = -bulletVel;
+        else if (gameData.moves.head == "down")
+            bullet.body.velocity.y = bulletVel;
     });
 }
 function updateTimer() {

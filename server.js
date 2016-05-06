@@ -38,7 +38,7 @@ function makeEnemies(game, numEnemies, min, max)
                 b = randomRange(min, max);
             }
         }
-        var enemy = {x: a, y: b, isDead: false, name: 'redEnemy'};
+        var enemy = {x: a, y: b, isDying: false, isDead: false, name: 'redEnemy'};
         game.enemyArray.push(enemy);
     }
 }
@@ -75,6 +75,10 @@ function moveEnemy(game, enemyId)
 {
 	var player = game.player;
 	var enemy = game.enemyArray[enemyId];
+	if(enemy.isDead || enemy.isDying)
+	{
+		return;
+	}
 	var tempX = enemy.x;
 	var tempY = enemy.y;
 	var xDist = player.x-enemy.x;
@@ -151,6 +155,11 @@ function killEnemies(game)
 	for(var i = 0; i < game.enemyArray.length; i++)
 	{
 		var enemy = game.enemyArray[i];
+		if(enemy.isDying)
+		{
+			enemy.isDead = true;
+			enemy.isDying = false;
+		}
 		if(dir == 'left')
 		{
 			if(enemy.y == player.y && player.x > enemy.x && player.x - enemy.x < closestDist)
@@ -182,7 +191,7 @@ function killEnemies(game)
 	}
 	if(closest != null)
 	{
-		closest.isDead = true;
+		closest.isDying = true;
 	}
 }
 
