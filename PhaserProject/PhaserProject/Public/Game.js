@@ -77,6 +77,7 @@ function create() {
             var enemyData = gameData.enemyArray[i];
             if(enemyData.isDying)
             {
+                console.log('someone fucked up or we killed someone, fuck you J$');
                 enemyArray[i].x = -1000;
                 enemyArray[i].y = -1000;
             }
@@ -85,6 +86,10 @@ function create() {
                 enemyArray[i].x = 4 + (travelDist - .1) * enemyData.x;
                 enemyArray[i].y = 100 + 4 + (travelDist - .1) * enemyData.y;
                 console.log((4 + (travelDist - .1) * enemyData.x) + "," + (100 + 4 + (travelDist - .1) * enemyData.y) + "," + enemyData.name);
+            }
+            else
+            {
+                console.log('fucker #' + i + ' is dead');
             }
         }
         time = 0;

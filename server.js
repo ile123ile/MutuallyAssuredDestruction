@@ -110,7 +110,7 @@ function moveEnemy(game, enemyId)
 		if(i==enemyId)
 			continue;
 		var other = game.enemyArray[i];
-		if(tempX==other.x&&tempY==other.y)
+		if(tempX==other.x&&tempY==other.y&&!(other.isDead||other.isDying))
 		{
 			return false;
 		}
@@ -159,6 +159,11 @@ function killEnemies(game)
 		{
 			enemy.isDead = true;
 			enemy.isDying = false;
+			continue;
+		}
+		if(enemy.isDead)
+		{
+			continue;
 		}
 		if(dir == 'left')
 		{
